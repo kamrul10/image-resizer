@@ -1,0 +1,19 @@
+version: "3.3"
+
+services:
+  
+  app:
+    build: .
+    command: npm run server
+    volumes:
+      - .:/app
+    ports:
+      - "3000:3000"
+
+  # worker:
+  #   build: .
+  #   depends_on:
+  #     - redis
+  #   volumes:
+  #     - .:/app
+  #   command: npm run
