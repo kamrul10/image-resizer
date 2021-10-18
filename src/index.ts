@@ -4,7 +4,7 @@ import morgan from "morgan";
 import express,{Application,Request, Response, NextFunction} from "express";
 import chalk from "chalk";
 import cors from "cors";
-import logger from "./utils/logger";
+import logger from "../utils/logger";
 dotenv.config();
 // routes for different modules
 import baseRoutes from "./routes/index";

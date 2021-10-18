@@ -16,6 +16,6 @@
     },
     "include": [
         "src/**/*",
-        "worker/**/*"
-    ]
+        "worker/**/*",
+        "utils"    ]
 }

@@ -1,7 +1,7 @@
 import { Request,Response } from "express";
 import S3 from 'aws-sdk/clients/s3';
 import File from "multer"
-import logger from "../../utils/logger";
+import logger from "../../../utils/logger";
 import {awsConfig} from "../../config"
 export const imageUploadToS3 = (req:Request, res:Response)=>{
     try{
