@@ -5,6 +5,7 @@ import express,{Application,Request, Response, NextFunction} from "express";
 import chalk from "chalk";
 import cors from "cors";
 import logger from "../utils/logger";
+import bodyParser from "body-parser";
 dotenv.config();
 // routes for different modules
 import baseRoutes from "./routes/index";
@@ -12,8 +13,10 @@ import baseRoutes from "./routes/index";
 const app:Application = express();
 const port = process.env.SERVER_PORT; // default port to listen;
 export const createServer = () => {
-    app.use(morgan("dev"));
-    app.use(cors());
+  app.use(morgan("dev"));
+  app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
+  app.use(cors());
+  app.use(bodyParser.json({ limit: "50mb" }));
 
     app.use(
       (req: Request, res: Response, next: NextFunction) => {

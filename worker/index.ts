@@ -1,10 +1,10 @@
 import dotenv from "dotenv";
-import logger from "../utils/logger"
-import AWS from "aws-sdk"
-import { lookup } from "dns";
+import logger from "../utils/logger";
+import AWS from "aws-sdk";
+import { Consumer,SQSMessage } from "sqs-consumer";
 dotenv.config();
-logger.info("Worker Started Successfully")
-logger.info(process.env.NODE_ENV)
+import  {resizeImage} from  "./libs"
+logger.info("Worker Started Successfully");
 
 // Set the region
 
@@ -19,15 +19,15 @@ const sqs = new AWS.SQS({
 const queueURL = process.env.AWS_SQS_URL;
 logger.info(queueURL)
 
-import { Consumer,SQSMessage } from "sqs-consumer"
+
 
 const app = Consumer.create({
   queueUrl: queueURL,
   handleMessage: async (message:SQSMessage) => {
     if (JSON.parse(message.Body).identify==='ragnar'){
-        logger.info(message.Attributes)
+        const messageBody = JSON.parse(message.Body)
         // do some work with `message`
-        logger.info(message.Body)
+        resizeImage(messageBody)
     }
 
   },

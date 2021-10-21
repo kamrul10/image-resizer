@@ -4,6 +4,10 @@ import File from "multer"
 import logger from "../../../utils/logger";
 import {awsConfig} from "../../config"
 import { publishMessage } from "../libs";
+import redisClient from "../../../utils/redis";
+/**
+ * @ReqBody{}
+ */
 export const imageUploadToS3 = (req:Request, res:Response)=>{
     try{
         req.body.files = req.files;
@@ -12,7 +16,6 @@ export const imageUploadToS3 = (req:Request, res:Response)=>{
         // Uploading files to the bucket
         req.body.files.forEach((file:any) => {
             if(["image/png","image/jpg"].includes(file.mimetype)){
-                logger.info(file.mimetype)
                 const params = {
                     Bucket: process.env.BUCKET_NAME,
                     Key: file.originalname,
@@ -23,24 +26,40 @@ export const imageUploadToS3 = (req:Request, res:Response)=>{
                     if (err) {
                         throw err;
                     }
-                    logger.info(`File uploaded successfully. ${data.Location}`);
+                    // send image data to sqs for resizing
                     const msgData = {
                         identify:"ragnar",
                         location:data.Location,
-                        height:  400,
-                        width: 600
+                        resolutions:JSON.parse(req.body.resolutions),
+                        mime:file.mimetype,
+                        originalName: file.originalname,
+                        public:req.body.public
                     }
                     publishMessage(JSON.stringify(msgData))
+                    res.status(200).json({success:true, message: "File uploaded successfully",data:data.Location})
                 });
 
 
             }
         })
-
-        res.status(200).json({success:true, message: "File uploaded successfully"})
     }catch(error){
         logger.error(error)
         res.status(500).json({success:true, message: "Something went wrong"})
     }
+
+}
+
+export const getResizeImageStat = async (req:Request, res:Response)=>{
+    try{
+        let resizedData = await redisClient.getAsync(req.body.original_image)
+        if(resizedData){
+            resizedData = JSON.parse(resizedData)
+        }
+        res.status(200).json({success:true,data:resizedData})
+    }catch(error){
+        logger.error(error)
+        res.status(500).json({success:true, message: "Something went wrong"})
+    }
+
 
 }
