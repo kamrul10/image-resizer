@@ -3,6 +3,7 @@ import S3 from 'aws-sdk/clients/s3';
 import File from "multer"
 import logger from "../../../utils/logger";
 import {awsConfig} from "../../config"
+import { publishMessage } from "../libs";
 export const imageUploadToS3 = (req:Request, res:Response)=>{
     try{
         req.body.files = req.files;
@@ -23,7 +24,16 @@ export const imageUploadToS3 = (req:Request, res:Response)=>{
                         throw err;
                     }
                     logger.info(`File uploaded successfully. ${data.Location}`);
+                    const msgData = {
+                        identify:"ragnar",
+                        location:data.Location,
+                        height:  400,
+                        width: 600
+                    }
+                    publishMessage(JSON.stringify(msgData))
                 });
+
+
             }
         })
 
