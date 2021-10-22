@@ -28,9 +28,15 @@ export const resizeImage = (messageBody:any)=>{
                         logger.error(err)
                         throw err;
                     }
-                    logger.info(messageBody.originalName)
+                    logger.info(data.Location)
+
                     // store resize update status to a key-value db for user acknowledgement
-                    let storedResized = await redisClient.getAsync(messageBody.originalName)
+                    let resizeRedisKey = messageBody.originalName
+                    if(typeof(messageBody.origin)!==undefined && messageBody.origin){
+                        logger.info(messageBody.origin)
+                        resizeRedisKey = resizeRedisKey+ messageBody.origin;
+                    }
+                    let storedResized = await redisClient.getAsync(resizeRedisKey)
                     const key = `${resolution.width}x${resolution.height}`
                     if(storedResized) {
                         storedResized = JSON.parse(storedResized)
@@ -39,7 +45,7 @@ export const resizeImage = (messageBody:any)=>{
                     }
                     storedResized[key]={url:data.Location,public:resolution.public}
                     storedResized = JSON.stringify(storedResized)
-                    await redisClient.setAsync(messageBody.originalName,storedResized)
+                    await redisClient.setAsync(resizeRedisKey,storedResized)
                 })
             })
 

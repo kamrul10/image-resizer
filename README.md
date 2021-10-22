@@ -11,7 +11,3 @@ You'll need docker installed on your machine to run this
 
 ## to stop the server
 `docker-compose down`
-
-## for running the test 
-`docker exec -it <container_name/id> sh`
-`npm run test`
