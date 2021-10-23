@@ -72,17 +72,17 @@ You'll need `redis` server running on your machine to run this
   ```
   -- example curl
     ``` 
-    curl --request POST \
-    --url '<baseUrl>/api/v1/images/?=' \
-    --header 'Content-Type: multipart/form-data' \
-    --form files=<filePath> \
-    --form public=yes \
-    --form 'resolutions=[{"width":200,"height":100,"public":"no"},{"width":200,"height":200,"public":"yes"}]'
+        curl --request POST \
+        --url '<baseUrl>/api/v1/images/?=' \
+        --header 'Content-Type: multipart/form-data' \
+        --form files=<filePath> \
+        --form public=yes \
+        --form 'resolutions=[{"width":200,"height":100,"public":"no"},{"width":200,"height":200,"public":"yes"}]'
     ```
 
 ##  Geting Image resize stat
     ```
-    url: <baseUrl>/api/v1/images/
+    url: <baseUrl>/api/v1/images/resize/stat
     headers:{
         "Content-Type": "pplication/json"
     }
@@ -94,7 +94,7 @@ You'll need `redis` server running on your machine to run this
     -- example curl
     ```
     curl --request POST \
-    --url https://5547-103-155-219-35.ngrok.io/api/v1/images/resize/stat \
+    --url <baseUrl>/api/v1/images/resize/stat \
     --header 'Content-Type: application/json' \
     --data '{
         "original_image":"PNG_1.png"
