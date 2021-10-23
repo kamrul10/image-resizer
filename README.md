@@ -29,7 +29,7 @@ You'll need docker installed on your machine to run this
 ## to stop the server
 `docker-compose down`
 
-## Running Server Using  Dcoker
+## Running Server in Local Environment
 You'll need `redis` server running on your machine to run this
 ### At first set up  `.env`  file
 
