@@ -59,7 +59,7 @@ You'll need `redis` server running on your machine to run this
 
 ## For upload the image and required resolutions
 
-  ```
+    ```
     url: <baseUrl>/api/v1/images/
     headers:{
         "Content-Type": "multipart/form-data"
@@ -69,15 +69,13 @@ You'll need `redis` server running on your machine to run this
         "public":"yes" or "no"
         "resolutions":{"width":200,"height":100,"public":"no"},{"width":200,"height":200,"public":"yes"}
     }
-  ```
-  -- example curl
-    ``` 
-        curl --request POST \
-        --url '<baseUrl>/api/v1/images/?=' \
-        --header 'Content-Type: multipart/form-data' \
-        --form files=<filePath> \
-        --form public=yes \
-        --form 'resolutions=[{"width":200,"height":100,"public":"no"},{"width":200,"height":200,"public":"yes"}]'
+    -- example curl
+    curl --request POST \
+    --url '<baseUrl>/api/v1/images/?=' \
+    --header 'Content-Type: multipart/form-data' \
+    --form files=<filePath> \
+    --form public=yes \
+    --form 'resolutions=[{"width":200,"height":100,"public":"no"},{"width":200,"height":200,"public":"yes"}]'
     ```
 
 ##  Geting Image resize stat
@@ -89,10 +87,10 @@ You'll need `redis` server running on your machine to run this
     body:{
         "original_image":"PNG_1.png"
     }
-    ```
+    
 
     -- example curl
-    ```
+
     curl --request POST \
     --url <baseUrl>/api/v1/images/resize/stat \
     --header 'Content-Type: application/json' \
