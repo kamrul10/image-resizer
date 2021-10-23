@@ -21,7 +21,7 @@ export const resizeImage = (messageBody:any)=>{
                     Bucket: process.env.BUCKET_NAME,
                     Key: `${resolution.width}x${resolution.height}_${messageBody.originalName}`,
                     Body: buffer,
-                    Tagging: `public=${resolution.public}`
+                    Tagging: `public=yes`
                 };
                 s3bucket.upload(params, async (err:Error, data:any) => {
                     if (err) {
@@ -31,11 +31,7 @@ export const resizeImage = (messageBody:any)=>{
                     logger.info(data.Location)
 
                     // store resize update status to a key-value db for user acknowledgement
-                    let resizeRedisKey = messageBody.originalName
-                    if(typeof(messageBody.origin)!==undefined && messageBody.origin){
-                        logger.info(messageBody.origin)
-                        resizeRedisKey = resizeRedisKey+ messageBody.origin;
-                    }
+                    const resizeRedisKey = messageBody.originalName
                     let storedResized = await redisClient.getAsync(resizeRedisKey)
                     const key = `${resolution.width}x${resolution.height}`
                     if(storedResized) {
@@ -48,6 +44,8 @@ export const resizeImage = (messageBody:any)=>{
                     await redisClient.setAsync(resizeRedisKey,storedResized)
                 })
             })
+
+
 
         })
         .catch(err => {

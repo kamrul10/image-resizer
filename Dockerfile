@@ -1,4 +1,4 @@
-FROM node:14.18.1-alpine
+FROM node:17.0-alpine
 
 WORKDIR /app
 
@@ -6,7 +6,7 @@ WORKDIR /app
 
 COPY package.json .
 
-RUN npm i npm@6.14.15 -g
+RUN npm i npm@latest -g
 
 COPY . .
 

@@ -4,7 +4,7 @@ import logger from "../../../utils/logger";
 import {awsConfig} from "../../config"
 import { publishMessage } from "../libs";
 import redisClient from "../../../utils/redis";
-
+const s3bucket = new S3(awsConfig);
 /**
  *
  * @param req
@@ -13,10 +13,6 @@ import redisClient from "../../../utils/redis";
 export const imageUploadToS3 = (req:Request, res:Response)=>{
     try{
         req.body.files = req.files;
-        const s3bucket = new S3(awsConfig);
-
-        logger.info(req.get('origin'))
-        logger.info(req.headers.host)
         req.body.files.forEach(async (file:any) => {
             if(["image/png","image/jpg"].includes(file.mimetype)){
                 // storing size of the uploading image
@@ -53,6 +49,8 @@ export const imageUploadToS3 = (req:Request, res:Response)=>{
                 });
 
 
+            }else{
+                res.status(400).json({success:false, message: "Supported Image format are jpg and png"})
             }
         })
     }catch(error){
@@ -70,11 +68,8 @@ export const imageUploadToS3 = (req:Request, res:Response)=>{
 export const getResizeImageStat = async (req:Request, res:Response)=>{
     try{
         // get resized info from redis
-        let resizeRedisKey = req.body.original_image;
-        if(typeof(req.headers.origin)!==undefined && req.headers.origin){
-            resizeRedisKey = resizeRedisKey + req.headers.origin
-        }
-        let resizedData = await redisClient.getAsync(req.body.original_image)
+        const resizeRedisKey = req.body.original_image;
+        let resizedData = await redisClient.getAsync(resizeRedisKey)
         if(resizedData){
             resizedData = JSON.parse(resizedData)
         }
@@ -89,4 +84,39 @@ export const getResizeImageStat = async (req:Request, res:Response)=>{
     }
 
 
+}
+
+export const deleteUploadedImage = async (req:Request, res:Response)=>{
+    try{
+        // get resized info from redis
+        const resizeRedisKey = req.body.original_image;
+        const resizedData = await redisClient.getAsync(resizeRedisKey)
+
+        //  array of file name which will  be deleted
+        let filesToDelete:string[]  = []
+        if (resizedData){
+            filesToDelete = Object.keys(JSON.parse(resizedData)).map(key=>{
+                return key+req.body.original_image
+            })
+        }
+
+        filesToDelete.push(req.body.original_image)
+
+        // delete files from  S3
+        logger.info(filesToDelete)
+        filesToDelete.forEach(async (fileName)=>{
+            const params = {  Bucket: process.env.BUCKET_NAME, Key:fileName};
+            const data = await s3bucket.deleteObject(params);
+            logger.info("Success. Object deleted.", data);
+
+        })
+
+        // delete from redis
+        await redisClient.deleteAsync(resizeRedisKey)
+
+        res.status(200).json({success:true})
+    }catch(error){
+        logger.error(error)
+        res.status(500).json({success:true, message: "Something went wrong"})
+    }
 }

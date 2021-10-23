@@ -7,6 +7,7 @@ import cors from "cors";
 import logger from "../utils/logger";
 import bodyParser from "body-parser";
 dotenv.config();
+import redisClient from "../utils/redis"
 // routes for different modules
 import baseRoutes from "./routes/index";
 // import config from "./config";
@@ -41,6 +42,7 @@ export const createServer = () => {
     return app
 }
 export const startServer = () => {
+  redisClient.deleteAsync('file_size')
   app.listen( port, () => {
       createServer()
       // tslint:disable-next-line:no-console

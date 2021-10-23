@@ -1,5 +1,5 @@
 # Image Resizer
-Resizing  image from original image and uload them to S#
+Resizing  image from original image and uload them to S3
 ## Running Server Using  Dcoker
 You'll need docker installed on your machine to run this
 
@@ -20,7 +20,7 @@ You'll need docker installed on your machine to run this
 
 ## To build the image
 
- `docker-compose --build`
+ `docker-compose build`
 
 ## To start the server
 
@@ -64,6 +64,7 @@ You'll need `redis` server running on your machine to run this
     headers:{
         "Content-Type": "multipart/form-data"
     }
+    method: POST
     body:{
         "files":<filePath>,
         "public":"yes" or "no"
@@ -84,6 +85,7 @@ You'll need `redis` server running on your machine to run this
     headers:{
         "Content-Type": "pplication/json"
     }
+    method: POST
     body:{
         "original_image":"PNG_1.png"
     }
@@ -93,6 +95,28 @@ You'll need `redis` server running on your machine to run this
 
     curl --request POST \
     --url <baseUrl>/api/v1/images/resize/stat \
+    --header 'Content-Type: application/json' \
+    --data '{
+        "original_image":"PNG_1.png"
+    }'
+    ```
+
+##  Delete images from S3
+    ```
+    url: <baseUrl>/api/v1/images/delete
+    headers:{
+        "Content-Type": "pplication/json"
+    }
+    method: POST
+    body:{
+        "original_image":"PNG_1.png"
+    }
+    
+
+    -- example curl
+
+    curl --request POST \
+    --url <baseUrl>/api/v1/images/delete \
     --header 'Content-Type: application/json' \
     --data '{
         "original_image":"PNG_1.png"
